@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TVMazeScraper.Models;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using TVMazeScraper.Services;
 
 namespace TVMazeScraper.Controllers
 {
@@ -12,10 +13,12 @@ namespace TVMazeScraper.Controllers
     {
 
         private readonly TVShowContext _context;
+        private readonly ITVMazeService _tVMazeService;
 
-        public TVShowController(TVShowContext context)
+        public TVShowController(TVShowContext context, ITVMazeService tVMazeService)
         {
             _context = context;
+            _tVMazeService = tVMazeService;
         }
 
         [HttpPost]
@@ -37,6 +40,19 @@ namespace TVMazeScraper.Controllers
             }
 
             return tvShow;
+        }
+
+        [HttpGet("actor/{id}")]
+        public async Task<ActionResult<ActorDto>> GetActorTest(long id)
+        {
+            var actor = await _tVMazeService.GetActorByIdAsync(id);
+
+            if (actor == null)
+            {
+                return NotFound();
+            }
+
+            return actor;
         }
     }
 }

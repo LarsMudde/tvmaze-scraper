@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TVMazeScraper.Models;
+using TVMazeScraper.Services;
 
 namespace TVMazeScraper
 {
@@ -29,7 +30,7 @@ namespace TVMazeScraper
         {
             services.AddDbContext<TVShowContext>(opt =>
                                               opt.UseInMemoryDatabase("TVMazeScraper"));
-
+            services.AddScoped<ITVMazeService, TVMazeService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
