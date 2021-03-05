@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using HttpClientDiagnostics;
 using Refit;
 using TVMazeScraper.Clients;
 using TVMazeScraper.Models;
@@ -17,7 +16,7 @@ namespace TVMazeScraper.Services
 
         public TVMazeService()
         {
-            _httpClient = new HttpClient(new HttpClientDiagnosticsHandler(new HttpClientHandler())) { BaseAddress = new Uri("http://api.tvmaze.com") };
+            _httpClient = new HttpClient(new HttpClientHandler()) { BaseAddress = new Uri("http://api.tvmaze.com") };
             _tVMazeClient = RestService.For<ITVMazeClient>(_httpClient);
         }
 

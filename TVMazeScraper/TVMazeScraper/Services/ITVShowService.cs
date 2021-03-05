@@ -8,6 +8,6 @@ namespace TVMazeScraper.Services
 {
     public interface ITVShowService
     {
-        Task<TVShow> ScrapeTVShowByIdAsync(long id);
+        Task<TVShow> GetTVShowByIdAsync(long id);
     }
 }
