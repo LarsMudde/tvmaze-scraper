@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using HttpClientDiagnostics;
@@ -20,9 +21,14 @@ namespace TVMazeScraper.Services
             _tVMazeClient = RestService.For<ITVMazeClient>(_httpClient);
         }
 
-        public async Task<ActorDto> GetActorByIdAsync(long id)
+        public async Task<TVShow> GetTVShowByIdAsync(long id)
         {
-            return await _tVMazeClient.GetActorById(id);
+            return await _tVMazeClient.GetTVShowById(id);
+        }
+
+        public async Task<IEnumerable<Actor>> GetCastByTVShowIdAsync(long id)
+        {
+            return await Task.FromResult(_tVMazeClient.GetCastByTVShowId(id).Result.Select(castMember => castMember.person).ToList());
         }
     }
 }

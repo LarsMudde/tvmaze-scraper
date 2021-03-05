@@ -31,6 +31,7 @@ namespace TVMazeScraper
             services.AddDbContext<TVShowContext>(opt =>
                                               opt.UseInMemoryDatabase("TVMazeScraper"));
             services.AddScoped<ITVMazeService, TVMazeService>();
+            services.AddScoped<ITVShowService, TVShowService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

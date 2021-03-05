@@ -8,6 +8,6 @@ namespace TVMazeScraper.Models
         [Key]
         public long Id { get; set; }
         public string Name { get; set; }
-        public ICollection<Actor> Cast { get; set; }
+        public IEnumerable<Actor> Cast { get; set; }
     }
 }

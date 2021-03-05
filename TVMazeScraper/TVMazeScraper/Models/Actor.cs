@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace TVMazeScraper.Models
 {
@@ -9,7 +10,8 @@ namespace TVMazeScraper.Models
         [Key]
         public long Id { get; set; }
         public string Name { get; set; }
-        public DateTime Birthday { get; set; }
-        public ICollection<TVShow> TVShows { get; set; }
+        public DateTime? Birthday { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<TVShow> TVShows { get; set; }
     }
 }

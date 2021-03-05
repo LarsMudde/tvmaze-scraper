@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Clients\" />
-    <Folder Include="Services\" />
     <Folder Include="Middleware\" />
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ namespace TVMazeScraper.Clients
         [Get("/shows/{id}")]
         Task<TVShow> GetTVShowById(long id);
 
-        [Get("/people/{id}")]
-        Task<ActorDto> GetActorById(long id);
+        [Get("/shows/{id}/cast")]
+        Task<IEnumerable<CastDto>> GetCastByTVShowId(long id);
     }
 }
