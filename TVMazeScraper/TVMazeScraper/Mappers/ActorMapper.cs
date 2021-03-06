@@ -17,9 +17,15 @@ namespace TVMazeScraper.Mappers
             .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => src.person.Birthday));
         });
 
+        private Mapper mapper;
+
+        public ActorMapper()
+        {
+            mapper = new Mapper(config);
+        }
+
         public Actor fromDto(CastMemberDto castMemberDto)
         {
-            var mapper = new Mapper(config);
             return mapper.Map<Actor>(castMemberDto);
         }
 

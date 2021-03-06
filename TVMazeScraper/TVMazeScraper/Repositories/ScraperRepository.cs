@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TVMazeScraper.Models;
 
@@ -12,6 +14,18 @@ namespace TVMazeScraper.Repositories
         public ScraperRepository(ScraperDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<IEnumerable<TVShow>> SearchShowsWithCast(string query, int page, int pagesize, CancellationToken cancellationToken)
+        {
+            return await _context.TVShows
+                .Where(s => s.Name.Contains(query))
+                .Include(s => s.Cast)
+                .ThenInclude(a => a.Actor)
+                .OrderBy(s => s.Id)
+                .Skip(page * pagesize)
+                .Take(pagesize)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task SaveOrUpdateTVShowWithCast(TVShow tVShow, IEnumerable<Actor> cast)

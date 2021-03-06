@@ -1,25 +1,26 @@
-﻿using AutoMapper;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using TVMazeScraper.Models;
+using TVMazeScraper.Mappers;
 using TVMazeScraper.Models.Dtos;
+using TVMazeScraper.Repositories;
 
 namespace TVMazeScraper.Services
 {
     public class TVShowService : ITVShowService
     {
-        private readonly ScraperDbContext _context;
-        private readonly int pageSize = 10;
+        private readonly IScraperRepository _scraperRepository;
+        private TVShowMapper tVShowMapper;
 
-        public TVShowService(ScraperDbContext context, ITVMazeService tVMazeService)
+        public TVShowService(IScraperRepository scraperRepository)
         {
-            _context = context;
+            _scraperRepository = scraperRepository;
+            tVShowMapper = new TVShowMapper();
         }
 
-        public async Task<IEnumerable<TVShow>> SearchTVShowWithCastAsync(string searchterm)
+        public async Task<IEnumerable<TVShowResponseDto>> SearchTVShowWithCastAsync(string searchterm, int page, int pagesize, CancellationToken cancellationToken)
         {
-            return _context.TVShows.Where(s => s.Name.Contains(searchterm)).ToList();
+            return tVShowMapper.toResponseDto(await _scraperRepository.SearchShowsWithCast(searchterm, page, pagesize, cancellationToken));
         }
     }
 }
