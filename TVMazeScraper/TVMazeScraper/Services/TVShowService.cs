@@ -7,9 +7,9 @@ namespace TVMazeScraper.Services
 {
     public class TVShowService : ITVShowService
     {
-        private readonly TVShowContext _context;
+        private readonly ScraperDbContext _context;
 
-        public TVShowService(TVShowContext context, ITVMazeService tVMazeService)
+        public TVShowService(ScraperDbContext context, ITVMazeService tVMazeService)
         {
             _context = context;
         }

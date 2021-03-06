@@ -3,11 +3,19 @@ using System.Collections.Generic;
 
 namespace TVMazeScraper.Models
 {
-    public class TVShowContext : DbContext
+    public class ScraperDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        public TVShowContext(DbContextOptions<TVShowContext> options) : base(options)
-        {
+        public ScraperDbContext(DbContextOptions<ScraperDbContext> options) : base(options) { }
 
+        public ScraperDbContext() { }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=tvmazescraper-db;Trusted_Connection=True;ConnectRetryCount=0");
+            }
+            base.OnConfiguring(optionsBuilder);
         }
 
         public DbSet<TVShow> TVShows { get; set; }

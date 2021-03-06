@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TVMazeScraper.Mappers;
@@ -42,8 +43,14 @@ namespace TVMazeScraper.BackgroundTasks
             using (var scope = _serviceProvider.CreateScope())
             {
                 var tVMazeService = scope.ServiceProvider.GetService<ITVMazeService>();
-                var tVShowDto = await tVMazeService.GetTVShowWithCastByIdAsync(count);
-                scope.ServiceProvider.GetService<TVShowContext>().TVShows.Add(_tVShowMapper.fromDto(tVShowDto));
+                var scraperDbContext = scope.ServiceProvider.GetService<ScraperDbContext>();
+                var tVShow = _tVShowMapper.fromDto(await tVMazeService.GetTVShowWithCastByIdAsync(count));
+
+                // Make sure an Actor doesn't appear twice in the list because he or she plays multiple characters.
+                tVShow.Cast = tVShow.Cast.GroupBy(a => a.Id).Select(ac => ac.First()).ToList();
+
+                scraperDbContext.TVShows.Add(tVShow);
+                scraperDbContext.SaveChanges();
             }
 
             _logger.LogInformation(
