@@ -10,6 +10,6 @@ namespace TVMazeScraper.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<Actor> Cast { get; set; }
+        public virtual IEnumerable<ActorTVShow> Cast { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TVMazeScraper.BackgroundTasks;
 using TVMazeScraper.Models;
+using TVMazeScraper.Repositories;
 using TVMazeScraper.Services;
 
 namespace TVMazeScraper
@@ -24,10 +25,14 @@ namespace TVMazeScraper
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ScraperDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("TVScraperDatabase")));
+                options.UseSqlServer(Configuration.GetConnectionString("TVScraperDatabase")), ServiceLifetime.Transient);
+
             services.AddHostedService<TimedTVMazeScraper>();
+
             services.AddScoped<ITVMazeService, TVMazeService>();
             services.AddScoped<ITVShowService, TVShowService>();
+            services.AddScoped<IScraperRepository, ScraperRepository>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

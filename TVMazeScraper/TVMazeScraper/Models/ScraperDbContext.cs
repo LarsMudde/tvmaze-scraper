@@ -20,15 +20,22 @@ namespace TVMazeScraper.Models
 
         public DbSet<TVShow> TVShows { get; set; }
         public DbSet<Actor> Actors { get; set; }
+        public DbSet<ActorTVShow> ActorsTVShows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TVShow>()
-                        .HasMany(s => s.Cast)
-                        .WithMany(a => a.TVShows)
-                        .UsingEntity<Dictionary<long, object>>(
-                            x => x.HasOne<Actor>().WithMany().HasForeignKey("ActorId").OnDelete(DeleteBehavior.Cascade),
-                            x => x.HasOne<TVShow>().WithMany().HasForeignKey("TVShowId").OnDelete(DeleteBehavior.Cascade));
+            modelBuilder.Entity<ActorTVShow>()
+               .HasKey(t => new { t.ActorId, t.TVShowId });
+
+            modelBuilder.Entity<ActorTVShow>()
+                .HasOne(pt => pt.Actor)
+                .WithMany(p => p.TVShows)
+                .HasForeignKey(pt => pt.ActorId);
+
+            modelBuilder.Entity<ActorTVShow>()
+                .HasOne(pt => pt.TVShow)
+                .WithMany(t => t.Cast)
+                .HasForeignKey(pt => pt.TVShowId);
         }
     }
 }

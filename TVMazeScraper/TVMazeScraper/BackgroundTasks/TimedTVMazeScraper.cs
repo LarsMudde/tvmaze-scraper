@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TVMazeScraper.Mappers;
-using TVMazeScraper.Models;
+using TVMazeScraper.Repositories;
 using TVMazeScraper.Services;
 
 namespace TVMazeScraper.BackgroundTasks
@@ -17,6 +17,7 @@ namespace TVMazeScraper.BackgroundTasks
         private Timer _timer;
         private readonly ILogger<TimedTVMazeScraper> _logger;
         private readonly TVShowMapper _tVShowMapper;
+        private readonly ActorMapper _actorMapper;
         private readonly IServiceScopeFactory _serviceProvider;
 
         public TimedTVMazeScraper(ILogger<TimedTVMazeScraper> logger, IServiceScopeFactory serviceProvider)
@@ -24,6 +25,7 @@ namespace TVMazeScraper.BackgroundTasks
             _logger = logger;
             _serviceProvider = serviceProvider;
             _tVShowMapper = new TVShowMapper();
+            _actorMapper = new ActorMapper();
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -43,14 +45,12 @@ namespace TVMazeScraper.BackgroundTasks
             using (var scope = _serviceProvider.CreateScope())
             {
                 var tVMazeService = scope.ServiceProvider.GetService<ITVMazeService>();
-                var scraperDbContext = scope.ServiceProvider.GetService<ScraperDbContext>();
-                var tVShow = _tVShowMapper.fromDto(await tVMazeService.GetTVShowWithCastByIdAsync(count));
+                var scraperRepository = scope.ServiceProvider.GetService<IScraperRepository>();
+                var scrapedShow = await tVMazeService.GetTVShowWithCastByIdAsync(count);
+                var tVShow = _tVShowMapper.fromDto(scrapedShow);
+                var cast = _actorMapper.fromDto(scrapedShow._embedded.Cast.ToList());
 
-                // Make sure an Actor doesn't appear twice in the list because he or she plays multiple characters.
-                tVShow.Cast = tVShow.Cast.GroupBy(a => a.Id).Select(ac => ac.First()).ToList();
-
-                scraperDbContext.TVShows.Add(tVShow);
-                scraperDbContext.SaveChanges();
+                await scraperRepository.SaveOrUpdateTVShowWithCast(tVShow, cast);
             }
 
             _logger.LogInformation(

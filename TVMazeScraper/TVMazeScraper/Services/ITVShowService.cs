@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVMazeScraper.Models;
 
 namespace TVMazeScraper.Services
 {
     public interface ITVShowService
     {
-        Task<TVShow> GetTVShowWithCastByIdAsync(long id);
+        Task<IEnumerable<TVShow>> SearchTVShowWithCastAsync(string searchterm);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TVMazeScraper.Models;
 using TVMazeScraper.Services;
@@ -16,17 +17,17 @@ namespace TVMazeScraper.Controllers
             _tVShowService = tVShowService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TVShow>> GetTVShow(long id)
+        [HttpGet("{searchTerm}")]
+        public async Task<ActionResult<IEnumerable<TVShow>>> GetTVShow(string searchTerm)
         {
-            var show = await _tVShowService.GetTVShowWithCastByIdAsync(id);
+            var show = await _tVShowService.SearchTVShowWithCastAsync(searchTerm);
 
             if (show == null)
             {
                 return NotFound();
             }
 
-            return show;
+            return Ok(show);
         }
     }
 }
