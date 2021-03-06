@@ -19,7 +19,7 @@ namespace TVMazeScraper.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TVShow>> GetTVShow(long id)
         {
-            var show = await _tVShowService.GetTVShowByIdAsync(id);
+            var show = await _tVShowService.GetTVShowWithCastByIdAsync(id);
 
             if (show == null)
             {

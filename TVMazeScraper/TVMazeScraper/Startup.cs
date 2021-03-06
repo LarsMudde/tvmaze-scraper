@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TVMazeScraper.BackgroundTasks;
 using TVMazeScraper.Models;
 using TVMazeScraper.Services;
 
@@ -30,6 +31,7 @@ namespace TVMazeScraper
         {
             services.AddDbContext<TVShowContext>(opt =>
                                               opt.UseInMemoryDatabase("TVMazeScraper"));
+            services.AddHostedService<TimedTVMazeScraper>();
             services.AddScoped<ITVMazeService, TVMazeService>();
             services.AddScoped<ITVShowService, TVShowService>();
             services.AddControllers();

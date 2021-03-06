@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace TVMazeScraper.Models
 {
@@ -11,7 +11,6 @@ namespace TVMazeScraper.Models
         public long Id { get; set; }
         public string Name { get; set; }
         public DateTime? Birthday { get; set; }
-        [JsonIgnore]
         public virtual ICollection<TVShow> TVShows { get; set; }
     }
 }
