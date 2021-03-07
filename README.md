@@ -13,3 +13,4 @@ This Scraper scrapes the data from the [TVMaze API](https://www.tvmaze.com/api) 
 - It would be nice to add unit tests and more ways to query the database, and save more data from the scraper to the database.
 - Decouple the Scraper and the REST API and put them in different services.
 - It would be nice to have better exception handling.
+- Add Unit Tests

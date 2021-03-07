@@ -7,6 +7,6 @@ namespace TVMazeScraper.Services
 {
     public interface ITVShowService
     {
-        Task<IEnumerable<TVShowResponseDto>> SearchTVShowWithCastAsync(string searchterm, uint page, uint pagesize, CancellationToken cancellationToken);
+        Task<IEnumerable<TVShowResponseDto>> SearchTVShowWithCastAsync(string searchTerm, uint page, uint pagesize, CancellationToken cancellationToken);
     }
 }

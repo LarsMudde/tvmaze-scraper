@@ -32,7 +32,7 @@ namespace TVMazeScraper.BackgroundTasks
             _actorMapper = new ActorMapper();
         }
 
-        public Task StartAsync(CancellationToken stoppingToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Scraper running.");
 
@@ -72,7 +72,7 @@ namespace TVMazeScraper.BackgroundTasks
             }
         }
 
-        public Task StopAsync(CancellationToken stoppingToken)
+        public Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Scraper is stopping.");
 
