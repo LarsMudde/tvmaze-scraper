@@ -46,7 +46,7 @@ namespace TVMazeScraper.Repositories
         /// <param name="tVShow">A TVShow only</param>
         /// <param name="cast">A list of Actors to save</param>
         /// <returns>Task</returns>
-        public async Task SaveOrUpdateTVShowWithCast(TVShow tVShow, IEnumerable<Actor> cast)
+        public async Task SaveTVShowWithCast(TVShow tVShow, IEnumerable<Actor> cast)
         {
             // Make sure an Actor doesn't appear twice in the list because he or she plays multiple characters.
             cast = cast.GroupBy(a => a.Id).Select(ac => ac.First()).ToList();

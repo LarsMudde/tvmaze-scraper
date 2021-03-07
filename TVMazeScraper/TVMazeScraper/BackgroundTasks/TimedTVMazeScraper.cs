@@ -57,7 +57,7 @@ namespace TVMazeScraper.BackgroundTasks
                     var tVShow = _tVShowMapper.fromDto(scrapedShow);
                     var cast = _actorMapper.fromDto(scrapedShow._embedded.Cast.ToList());
 
-                    await scraperRepository.SaveOrUpdateTVShowWithCast(tVShow, cast);
+                    await scraperRepository.SaveTVShowWithCast(tVShow, cast);
                 }
                 catch (ApiException e)
                 {
