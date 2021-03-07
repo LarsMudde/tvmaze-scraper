@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -10,10 +12,12 @@ namespace TVMazeScraper.Repositories
     public class ScraperRepository : IScraperRepository
     {
         private readonly ScraperDbContext _context;
+        private readonly ILogger<ScraperRepository> _logger;
 
-        public ScraperRepository(ScraperDbContext context)
+        public ScraperRepository(ScraperDbContext context, ILogger<ScraperRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<TVShow>> SearchShowsWithCast(string query, int page, int pagesize, CancellationToken cancellationToken)
@@ -34,7 +38,7 @@ namespace TVMazeScraper.Repositories
             cast = cast.GroupBy(a => a.Id).Select(ac => ac.First()).ToList();
             using (var transaction = _context.Database.BeginTransaction())
             {
-                await SaveTvShow (tVShow);
+                await SaveTvShow(tVShow);
                 await SaveCastWithTvShow(cast, tVShow);
                 transaction.Commit();
             }
@@ -42,31 +46,46 @@ namespace TVMazeScraper.Repositories
 
         private async Task SaveCastWithTvShow(IEnumerable<Actor> cast, TVShow tVShow)
         {
-            foreach (Actor actor in cast)
+            try
             {
-                var _actor = _context.Actors.FirstOrDefault(item => item.Id == actor.Id);
-                if (_actor == null)
+                foreach (Actor actor in cast)
                 {
-                    await _context.Actors.AddAsync(actor);
-                    await _context.ActorsTVShows.AddAsync(new ActorTVShow(actor.Id, tVShow.Id));
+                    var _actor = _context.Actors.FirstOrDefault(item => item.Id == actor.Id);
+                    if (_actor == null)
+                    {
+                        await _context.Actors.AddAsync(actor);
+                        await _context.ActorsTVShows.AddAsync(new ActorTVShow(actor.Id, tVShow.Id));
+                    }
+                    else if (!_context.ActorsTVShows.Any(sa => sa.TVShowId == tVShow.Id && sa.ActorId == actor.Id))
+                    {
+                        await _context.ActorsTVShows.AddAsync(new ActorTVShow(actor.Id, tVShow.Id));
+                    }
                 }
-                else if (!_context.ActorsTVShows.Any(sa => sa.TVShowId == tVShow.Id && sa.ActorId == actor.Id))
-                {
-                    await _context.ActorsTVShows.AddAsync(new ActorTVShow(actor.Id, tVShow.Id));
-                }
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
+            catch (Exception e)
+            {
+                _logger.LogError(
+                    "Repository error: {message}", e.Message);
+            }
         }
 
         private async Task SaveTvShow(TVShow tVShow)
         {
-            var _tVShow = _context.TVShows.FirstOrDefault(item => item.Id == tVShow.Id);
-            if (_tVShow == null)
+            try
             {
-                await _context.TVShows.AddAsync(tVShow);
-                await _context.SaveChangesAsync();
+                var _tVShow = _context.TVShows.FirstOrDefault(item => item.Id == tVShow.Id);
+                if (_tVShow == null)
+                {
+                    await _context.TVShows.AddAsync(tVShow);
+                    await _context.SaveChangesAsync();
+                }
             }
-
+            catch (Exception e)
+            {
+                _logger.LogError(
+                    "Repository error: {message}", e.Message);
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Polly;
 using Refit;
 using TVMazeScraper.Clients;
 using TVMazeScraper.Models.Dtos;
@@ -20,7 +22,19 @@ namespace TVMazeScraper.Services
 
         public async Task<TVShowDto> GetTVShowWithCastByIdAsync(long id)
         {
-            return await _tVMazeClient.GetTVShowWithCastById(id);
+            var timeoutPolicy = Policy
+            .Handle<ApiException>(ex => ex.StatusCode == HttpStatusCode.RequestTimeout)
+            .RetryAsync(5, async (exception, retryCount) =>
+            await Task.Delay(1000).ConfigureAwait(false));
+
+            var fairUsePolicy = Policy
+            .Handle<ApiException>(ex => ex.StatusCode == HttpStatusCode.TooManyRequests)
+            .RetryAsync(5, async (exception, retryCount) =>
+            await Task.Delay(1000).ConfigureAwait(false));
+
+            return await timeoutPolicy.WrapAsync(fairUsePolicy)
+                .ExecuteAsync(async () => await _tVMazeClient.GetTVShowWithCastById(id))
+                .ConfigureAwait(false);
         }
     }
 }
