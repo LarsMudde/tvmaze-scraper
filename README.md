@@ -1,9 +1,9 @@
 # TVMaze-scraper
 
 ### Instructions
-Please make sure to update the database before running the application by running the "update-database" command in the NuGet package manager console.
-The application uses Polly to help deal with the rate limit of the TVMaze API. However if you set the interval (in appsettings.json) too low, you will surely reach the maximum amount of retries soon and miss out on data.
-`API calls are rate limited to allow at least 20 calls every 10 seconds per IP address.`
+- Please make sure to update the database before running the application by running the "update-database" command in the NuGet package manager console.
+- The application uses Polly to help deal with the rate limit of the TVMaze API. However if you set the interval (in appsettings.json) too low, you will surely reach the maximum amount of retries soon and miss out on data.
+- `API calls are rate limited to allow at least 20 calls every 10 seconds per IP address.`
 
 ### Considerations:
 - I have gone a little bit overboard with the Dto's and mappers, this could still be reduced but I liked the idea that I could store more data from the api without having to change the architecture of the application, I just have to expand the dto's and models. 
