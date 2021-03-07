@@ -66,7 +66,6 @@ namespace TVMazeScraper.BackgroundTasks
                     _logger.LogError(
                     "Scraper error: {message}", e.Message);
                 }
-
             }
 
             _logger.LogInformation(

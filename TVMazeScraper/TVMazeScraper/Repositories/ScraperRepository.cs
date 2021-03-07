@@ -38,9 +38,16 @@ namespace TVMazeScraper.Repositories
             cast = cast.GroupBy(a => a.Id).Select(ac => ac.First()).ToList();
             using (var transaction = _context.Database.BeginTransaction())
             {
-                await SaveTvShow(tVShow);
-                await SaveCastWithTvShow(cast, tVShow);
-                transaction.Commit();
+                try
+                {
+                    await SaveTvShow(tVShow);
+                    await SaveCastWithTvShow(cast, tVShow);
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Repository error: {message}", e.Message);
+                }
             }
         }
 
