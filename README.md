@@ -7,6 +7,7 @@ This Scraper scrapes the data from the [TVMaze API](https://www.tvmaze.com/api) 
 - `API calls are rate limited to allow at least 20 calls every 10 seconds per IP address.`
 
 ### Considerations:
+- Currently the scraper just counts upwards (from 1 to the limit of long). It would be nice if there was a range specified and the Scraper could just keep scraping that range.
 - I have gone a little bit overboard with the Dto's and mappers, this could still be reduced but I liked the idea that I could store more data from the api without having to change the architecture of the application, I just have to expand the dto's and models. 
 - In the future it would be better/wise to have the Id's from the Actor and TVShow not be the database Id. Because of the high speed of the scraper, and the scraper being asynchronous it can sometimes cause attempts to insert duplicate keys for the actor which will at this moment cause an exception, this could also be solved by changing the scope of the DbContext.
 - I have opted for 2 separate mappers with separate configurations, it might be nicer to combine these in the future.
