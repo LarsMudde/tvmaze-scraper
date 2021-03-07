@@ -18,8 +18,16 @@ namespace TVMazeScraper.Controllers
             _tVShowService = tVShowService;
         }
 
+        /// <summary>
+        /// Searches for searchterm in the name of a tv show and returns a paged result
+        /// </summary>
+        /// <param name="searchTerm">Word or part of word to search for</param>
+        /// <param name="page">Which page to get</param>
+        /// <param name="pageSize">How many results per page are desired</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>IEnumerable with TVShows and cast matching searchTerm</returns>
         [HttpGet("/search/{searchTerm}")]
-        public async Task<ActionResult<IEnumerable<TVShowResponseDto>>> SearchTVShowPaged(string searchTerm, [FromQuery] int page = 0, [FromQuery] int pageSize = 10, CancellationToken cancellation = default(CancellationToken))
+        public async Task<ActionResult<IEnumerable<TVShowResponseDto>>> SearchTVShowPaged(string searchTerm, [FromQuery] uint page = 0, [FromQuery] uint pageSize = 10, CancellationToken cancellation = default(CancellationToken))
         {
             var show = await _tVShowService.SearchTVShowWithCastAsync(searchTerm, page, pageSize, cancellation);
 

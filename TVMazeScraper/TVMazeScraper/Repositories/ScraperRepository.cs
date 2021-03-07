@@ -20,18 +20,32 @@ namespace TVMazeScraper.Repositories
             _logger = logger;
         }
 
-        public async Task<IEnumerable<TVShow>> SearchShowsWithCast(string query, int page, int pagesize, CancellationToken cancellationToken)
+        /// <summary>
+        /// Gets a list of tvshows including cast where the name contains the searchterm
+        /// </summary>
+        /// <param name="searchTerm">Word or part of word to search for</param>
+        /// <param name="page">Which page to get</param>
+        /// <param name="pageSize">How many results per page are desired</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>IEnumerable with TVShows and cast matching searchterm</returns>
+        public async Task<IEnumerable<TVShow>> SearchShowsWithCast(string searchTerm, uint page, uint pageSize, CancellationToken cancellationToken)
         {
             return await _context.TVShows
-                .Where(s => s.Name.Contains(query))
+                .Where(s => s.Name.Contains(searchTerm))
                 .Include(s => s.Cast)
                 .ThenInclude(a => a.Actor)
                 .OrderBy(s => s.Id)
-                .Skip(page * pagesize)
-                .Take(pagesize)
+                .Skip((int) (page * pageSize))
+                .Take((int) pageSize)
                 .ToListAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Saves or updates a TVShow with Cast
+        /// </summary>
+        /// <param name="tVShow">A TVShow only</param>
+        /// <param name="cast">A list of Actors to save</param>
+        /// <returns>Task</returns>
         public async Task SaveOrUpdateTVShowWithCast(TVShow tVShow, IEnumerable<Actor> cast)
         {
             // Make sure an Actor doesn't appear twice in the list because he or she plays multiple characters.

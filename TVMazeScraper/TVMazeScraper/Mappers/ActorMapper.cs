@@ -29,6 +29,7 @@ namespace TVMazeScraper.Mappers
             return mapper.Map<Actor>(castMemberDto);
         }
 
+        //TODO: Update so this works with the mapper itsself instead of a ForEach
         public IEnumerable<Actor> fromDto(IEnumerable<CastMemberDto> castMemberDtos)
         {
             var actors = new List<Actor>();

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Refit;
@@ -17,12 +18,14 @@ namespace TVMazeScraper.BackgroundTasks
         private int executionCount = 0;
         private Timer _timer;
         private readonly ILogger<TimedTVMazeScraper> _logger;
+        private readonly IConfiguration _configuration;
         private readonly TVShowMapper _tVShowMapper;
         private readonly ActorMapper _actorMapper;
         private readonly IServiceScopeFactory _serviceProvider;
 
-        public TimedTVMazeScraper(ILogger<TimedTVMazeScraper> logger, IServiceScopeFactory serviceProvider)
+        public TimedTVMazeScraper(ILogger<TimedTVMazeScraper> logger, IServiceScopeFactory serviceProvider, IConfiguration configuration)
         {
+            _configuration = configuration;
             _logger = logger;
             _serviceProvider = serviceProvider;
             _tVShowMapper = new TVShowMapper();
@@ -34,13 +37,14 @@ namespace TVMazeScraper.BackgroundTasks
             _logger.LogInformation("Scraper running.");
 
             _timer = new Timer(Scrape, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(0.01));
+                TimeSpan.FromMilliseconds(_configuration.GetValue<double>("TVMazeSCraperSettings:ScraperIntervalInMS")));
 
             return Task.CompletedTask;
         }
 
         private async void Scrape(object state)
         {
+            // TODO: Start from zero after crawling all shows once
             var count = Interlocked.Increment(ref executionCount);
 
             using (var scope = _serviceProvider.CreateScope())
@@ -59,7 +63,7 @@ namespace TVMazeScraper.BackgroundTasks
                 {
                     // Handle exceptions that don't justify a retry such as 404. (for now we just skip those)
                     _logger.LogError(
-                    "Scraper error: {status}, message: {message}", e.StatusCode, e.Message);
+                    "Scraper ApiException, show: {status}, message: {message}", e.StatusCode, e.Message);
                 }
                 catch (Exception e)
                 {
@@ -67,9 +71,6 @@ namespace TVMazeScraper.BackgroundTasks
                     "Scraper error: {message}", e.Message);
                 }
             }
-
-            _logger.LogInformation(
-                "Scraper is working. Count: {Count}", count);
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

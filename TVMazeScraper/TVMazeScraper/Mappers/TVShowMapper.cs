@@ -44,6 +44,7 @@ namespace TVMazeScraper.Mappers
             return mapper.Map<TVShowResponseDto>(tVShow);
         }
 
+        //TODO: Update so this works with the mapper itsself instead of a ForEach
         public IEnumerable<TVShowResponseDto> toResponseDto(IEnumerable<TVShow> tVShows)
         {
             var responseDtos = new List<TVShowResponseDto>();
