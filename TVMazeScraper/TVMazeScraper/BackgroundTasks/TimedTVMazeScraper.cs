@@ -47,29 +47,28 @@ namespace TVMazeScraper.BackgroundTasks
             // TODO: Start from zero after crawling all shows once
             var count = Interlocked.Increment(ref executionCount);
 
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var tVMazeService = scope.ServiceProvider.GetService<ITVMazeService>();
-                var scraperRepository = scope.ServiceProvider.GetService<IScraperRepository>();
-                try
-                {
-                    var scrapedShow = await tVMazeService.GetTVShowWithCastByIdAsync(count);
-                    var tVShow = _tVShowMapper.fromDto(scrapedShow);
-                    var cast = _actorMapper.fromDto(scrapedShow._embedded.Cast.ToList());
+            using var scope = _serviceProvider.CreateScope();
 
-                    await scraperRepository.SaveTVShowWithCast(tVShow, cast);
-                }
-                catch (ApiException e)
-                {
-                    // Handle exceptions that don't justify a retry such as 404. (for now we just skip those)
-                    _logger.LogError(
-                    "Scraper ApiException, show: {status}, message: {message}", e.StatusCode, e.Message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(
-                    "Scraper error: {message}", e.Message);
-                }
+            var tVMazeService = scope.ServiceProvider.GetService<ITVMazeService>();
+            var scraperRepository = scope.ServiceProvider.GetService<IScraperRepository>();
+            try
+            {
+                var scrapedShow = await tVMazeService.GetTVShowWithCastByIdAsync(count);
+                var tVShow = _tVShowMapper.FromDto(scrapedShow);
+                var cast = _actorMapper.FromDto(scrapedShow._embedded.Cast.ToList());
+
+                await scraperRepository.SaveTVShowWithCast(tVShow, cast);
+            }
+            catch (ApiException e)
+            {
+                // Handle exceptions that don't justify a retry such as 404. (for now we just skip those)
+                _logger.LogError(
+                "Scraper ApiException, show: {status}, message: {message}", e.StatusCode, e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(
+                "Scraper error: {message}", e.Message);
             }
         }
 

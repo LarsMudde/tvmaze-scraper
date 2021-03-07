@@ -50,18 +50,16 @@ namespace TVMazeScraper.Repositories
         {
             // Make sure an Actor doesn't appear twice in the list because he or she plays multiple characters.
             cast = cast.GroupBy(a => a.Id).Select(ac => ac.First()).ToList();
-            using (var transaction = _context.Database.BeginTransaction())
+            using var transaction = _context.Database.BeginTransaction();
+            try
             {
-                try
-                {
-                    await SaveTvShow(tVShow);
-                    await SaveCastWithTvShow(cast, tVShow);
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError("Repository error: {message}", e.Message);
-                }
+                await SaveTvShow(tVShow);
+                await SaveCastWithTvShow(cast, tVShow);
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Repository error: {message}", e.Message);
             }
         }
 

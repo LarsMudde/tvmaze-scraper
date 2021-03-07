@@ -10,7 +10,7 @@ namespace TVMazeScraper.Services
     public class TVShowService : ITVShowService
     {
         private readonly IScraperRepository _scraperRepository;
-        private TVShowMapper tVShowMapper;
+        private readonly TVShowMapper tVShowMapper;
 
         public TVShowService(IScraperRepository scraperRepository)
         {
@@ -28,7 +28,7 @@ namespace TVMazeScraper.Services
         /// <returns>IEnumerable with TVShows and cast matching query</returns>
         public async Task<IEnumerable<TVShowResponseDto>> SearchTVShowWithCastAsync(string searchTerm, uint page, uint pagesize, CancellationToken cancellationToken)
         {
-            return tVShowMapper.toResponseDto(await _scraperRepository.SearchShowsWithCast(searchTerm, page, pagesize, cancellationToken));
+            return tVShowMapper.ToResponseDto(await _scraperRepository.SearchShowsWithCast(searchTerm, page, pagesize, cancellationToken));
         }
     }
 }

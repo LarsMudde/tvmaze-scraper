@@ -10,7 +10,7 @@ namespace TVMazeScraper.Mappers
 {
     public class TVShowMapper
     {
-        private MapperConfiguration config = new MapperConfiguration(cfg =>
+        private readonly MapperConfiguration config = new(cfg =>
         {
             cfg.CreateMap<TVShowDto, TVShow>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -27,28 +27,28 @@ namespace TVMazeScraper.Mappers
             .ForMember(dest => dest.Cast, opt => opt.MapFrom(src => src.Cast));
         });
 
-        private Mapper mapper;
+        private readonly Mapper mapper;
 
         public TVShowMapper()
         {
             mapper = new Mapper(config);
         }
 
-        public TVShow fromDto(TVShowDto tVShowDto)
+        public TVShow FromDto(TVShowDto tVShowDto)
         {
             return mapper.Map<TVShow>(tVShowDto);
         }
 
-        public TVShowResponseDto toResponseDto(TVShow tVShow)
+        public TVShowResponseDto ToResponseDto(TVShow tVShow)
         {
             return mapper.Map<TVShowResponseDto>(tVShow);
         }
 
         //TODO: Update so this works with the mapper itsself instead of a ForEach
-        public IEnumerable<TVShowResponseDto> toResponseDto(IEnumerable<TVShow> tVShows)
+        public IEnumerable<TVShowResponseDto> ToResponseDto(IEnumerable<TVShow> tVShows)
         {
             var responseDtos = new List<TVShowResponseDto>();
-            tVShows.ToList().ForEach(s => responseDtos.Add(toResponseDto(s)));
+            tVShows.ToList().ForEach(s => responseDtos.Add(ToResponseDto(s)));
             return responseDtos;
         }
     }

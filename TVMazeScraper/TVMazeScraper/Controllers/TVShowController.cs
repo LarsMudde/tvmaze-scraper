@@ -27,7 +27,7 @@ namespace TVMazeScraper.Controllers
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>IEnumerable with TVShows and cast matching searchTerm</returns>
         [HttpGet("/search/{searchTerm}")]
-        public async Task<ActionResult<IEnumerable<TVShowResponseDto>>> SearchTVShowPaged(string searchTerm, [FromQuery] uint page = 0, [FromQuery] uint pageSize = 10, CancellationToken cancellation = default(CancellationToken))
+        public async Task<ActionResult<IEnumerable<TVShowResponseDto>>> SearchTVShowPaged(string searchTerm, [FromQuery] uint page = 0, [FromQuery] uint pageSize = 10, CancellationToken cancellation = default)
         {
             var show = await _tVShowService.SearchTVShowWithCastAsync(searchTerm, page, pageSize, cancellation);
 
