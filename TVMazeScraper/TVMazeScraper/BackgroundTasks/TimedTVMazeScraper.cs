@@ -44,7 +44,6 @@ namespace TVMazeScraper.BackgroundTasks
 
         private async void Scrape(object state)
         {
-            // TODO: Start from zero after crawling all shows once
             var count = Interlocked.Increment(ref executionCount);
 
             using var scope = _serviceProvider.CreateScope();
@@ -69,6 +68,10 @@ namespace TVMazeScraper.BackgroundTasks
             {
                 _logger.LogError(
                 "Scraper error: {message}", e.Message);
+            }
+            if (count == int.MaxValue)
+            {
+                count = 0;
             }
         }
 
